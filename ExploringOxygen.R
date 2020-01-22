@@ -14,7 +14,7 @@ library(zoo)
 ##################################
 ###########Import data############
 ##################################
-setwd("~/Dropbox/BUTMAN/SUCR/TS Sensor Data/Metab Datasets/")
+setwd("~/Dropbox/GitHub Repos/Taylor-StreamMetabolizer/data/Metab Datasets/")
 raw <- read.csv("Mouth_Metab.csv")
 raw <- raw %>%
   select(DateTime.adj,Temp.C,DO.mgL,Intensity.lumft2)
@@ -76,11 +76,11 @@ abline(100,0,col="black",lty=2,lwd=2)
 #########################################
 ######Load in EXO2 Oxygen Data##########
 #########################################
-setwd("~/Dropbox/BUTMAN/SUCR/StreamMetabolizer/200116/")
+setwd("~/Dropbox/GitHub Repos/Taylor-StreamMetabolizer/data/")
 exo<-read.csv("EXO2 Oxygen Data.csv")
 
-local.time.pdt <- as.POSIXct(exo$DateTime.Rounded,format = "%Y-%m-%d %H:%M:%S",tz = 'America/Los_Angeles')
-solar.time.exo <- posix.solar.time <- calc_solar_time(local.time.pdt,longitude = long)
+local.time.pdt.exo <- as.POSIXct(exo$DateTime.Rounded,format = "%Y-%m-%d %H:%M:%S",tz = 'America/Los_Angeles')
+solar.time.exo <- posix.solar.time.exo <- calc_solar_time(local.time.pdt.exo,longitude = long)
 exo$solar.time <- solar.time.exo
 exo$solar.time <- round_date(exo$solar.time,unit = "10 min")
 
@@ -156,3 +156,57 @@ plot(combo$odo.sat,residual.sat,pch=16,xlab="DO.sat EXO2",ylab="Residual")
 abline(0,0,lty=2,col="red")
 residmod.sat <- lm(residual.sat~combo$odo.sat)
 abline(residmod.sat)
+
+
+
+#########################################
+#####Start adding CO2 data for comps#####
+#########################################
+setwd("~/Dropbox/GitHub Repos/Taylor-StreamMetabolizer/data/")
+co2 <- read.csv("CO2 data.csv")
+temp.obs <- co2$Temp.C
+
+local.time.pdt.co2 <- as.POSIXct(co2$DateTime.Rounded,format = "%Y-%m-%d %H:%M:%S",tz = 'America/Los_Angeles')
+solar.time.co2 <- posix.solar.time.co2 <- calc_solar_time(local.time.pdt.co2,longitude = long)
+co2$solar.time <- solar.time.co2
+co2$solar.time <- round_date(co2$solar.time,unit = "10 min")
+
+#create vector of CO2 obs in ppm
+co2.obs <- co2$CO2.ppm 
+
+#create vector of CO2 sat in ppm
+source("~/Dropbox/GitHub Repos/Taylor-StreamMetabolizer/Gas Atm Sat.R")
+obs_henry_co2 <- Kh_Plummer(temp.obs + 273.15)
+obs_CO2sat_uM <- getSaturation(LakeKh = obs_henry_co2, AtmP = Pressure, gas = "CO2")
+obs_CO2sat_ppm <- obs_CO2sat_uM/obs_henry_co2 * Pressure
+
+#estimate CO2 saturation
+co2.sat <- (co2.obs/obs_CO2sat_ppm) * 100
+co2 <- cbind(co2,co2.sat)
+
+#create dataframe to match all solar.time dates
+co2.mouth.subset = co2 %>%
+  select(solar.time, CO2.ppm, co2.sat)
+
+dat.mouth.subset = left_join(dat.mouth.subset, exo.mouth.subset, by = "solar.time")
+dat.mouth.subset = left_join(dat.mouth.subset, co2.mouth.subset, by = "solar.time")
+
+
+
+
+#########################################
+#####Add CO2 Saturation Data to DO Plot##
+#########################################
+quartz()
+par(mar=c(3,3,1,4),mgp=c(1.5,0.5,0),tck=-0.02,bg='white')
+plot(dat.mouth.subset$solar.time,dat.mouth.subset$DO.sat,pch=1,col="lavenderblush4",xlab="Date",ylab="DO.sat MiniDOT",ylim=c(0,120))
+par(new=T)
+plot(dat.mouth.subset$solar.time,dat.mouth.subset$odo.sat,pch=16,cex=2,axes=F,ylab=NA,xlab=NA,ylim=c(0,120),col="red")
+axis(side=4)
+mtext(side=4,line=2,"% Saturation")
+par(new=T)
+plot(dat.mouth.subset$solar.time,dat.mouth.subset$co2.sat,pch=16,cex=2,axes=F,ylab=NA,xlab=NA,ylim=c(0,120),col="blue")
+legend("bottomright",c("MiniDOT TS DO % Sat","EXO2 DO % Sat","CO2 % Sat"),pch=c(1,16,16),col=c("lavenderblush4","red","blue"),cex=1.5)
+
+
+
