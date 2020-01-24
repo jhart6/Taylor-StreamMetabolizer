@@ -200,6 +200,7 @@ dat.mouth.subset = left_join(dat.mouth.subset, co2.mouth.subset, by = "solar.tim
 quartz()
 par(mar=c(3,3,1,4),mgp=c(1.5,0.5,0),tck=-0.02,bg='white')
 plot(dat.mouth.subset$solar.time,dat.mouth.subset$DO.sat,pch=1,col="lavenderblush4",xlab="Date",ylab="DO.sat MiniDOT",ylim=c(0,120))
+abline(h=100,lty=2)
 par(new=T)
 plot(dat.mouth.subset$solar.time,dat.mouth.subset$odo.sat,pch=16,cex=2,axes=F,ylab=NA,xlab=NA,ylim=c(0,120),col="red")
 axis(side=4)
