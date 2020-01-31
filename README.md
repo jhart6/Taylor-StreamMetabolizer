@@ -5,18 +5,18 @@ This repository contains resources to build a stream metabolism model for sampli
 
 Field data collection:
 1. Sensor Locations
-  * Sensors were located at four sites on Lower Taylor Creek, Seattle WA:     * Mouth (47.510209,	-122.24631)
-    * Garden (47.51142003,	-122.2468133)
-    * Hound (47.51069868,	-122.2480442)
-    * Culvert (47.50948833,	-122.2481793)
+    * Sensors were located at four sites on Lower Taylor Creek, Seattle WA:     * Mouth (47.510209,	-122.24631)
+      * Garden (47.51142003,	-122.2468133)
+      * Hound (47.51069868,	-122.2480442)
+      * Culvert (47.50948833,	-122.2481793)
 2. Sensor Descriptions
-  * Each location was fitted with three sensors, firmly attached to a 4ft piece of rebar.
-      1. PME MiniDOT Sensor, fully submerged, equipped with copper anti-biofouling plate, sampled at 10min intervals
-      2. Onset HOBO Conductivity Logger, fully submerged, sampled at 10 min intervals
-      3. HOBO Pendant PAR Sensor, located just above water level, sampled at 10min intervals
+    * Each location was fitted with three sensors, firmly attached to a 4ft piece of rebar.
+        1. PME MiniDOT Sensor, fully submerged, equipped with copper anti-biofouling plate, sampled at 10min intervals
+        2. Onset HOBO Conductivity Logger, fully submerged, sampled at 10 min intervals
+        3. HOBO Pendant PAR Sensor, located just above water level, sampled at 10min intervals
 3. Data Collation
-  * Data were downloaded periodically over the sampling period.
-  * Data were manually collated in Microsoft Excel, according to timestamp.
+    * Data were downloaded periodically over the sampling period.
+    * Data were manually collated in Microsoft Excel, according to timestamp.
 
 Each metabolism dataset contains the following variables:
 1. Epoch.Sec: This is the unit in which MiniDOTs record DateTime.
