@@ -12,14 +12,14 @@ library(lubridate)
 library(zoo)
 
 #####PREPARING DRIVER DATA#####
-#Import data
+#Import mouth time series dataset
 setwd("~/Dropbox/BUTMAN/SUCR/TS Sensor Data/Metab Datasets/")
 raw <- read.csv("Mouth_Metab.csv")
-raw <- raw %>%
+raw <- raw %>% #select only desired columns
   select(DateTime.adj,Temp.C,DO.mgL,Intensity.lumft2)
-long <- -122.24631
+long <- -122.24631 #longitude of field site
 
-#Convert DateTime PST to Posix to Solar Time
+#Convert DateTime PST to Posix to Solar Time (package requires Solar Time)
 local.time.pdt <- as.POSIXct(raw$DateTime.adj,format = "%Y-%m-%d %H:%M:%S",tz = 'America/Los_Angeles')
 solar.time <- posix.solar.time <- calc_solar_time(local.time.pdt,longitude = long)
 
@@ -30,7 +30,7 @@ DO.sat <- calc_DO_sat(temp = raw$Temp.C,press = 1013, sal = 0)
 light <- raw$Intensity.lumft2 * 10.7639104167 * 0.0185
 
 #Create a depth column (m)
-depth = 0.02
+depth = 0.02 #value estimated based on sensor placement in Taylor Creek
 
 #Create dataframe with relevant Metab data in correct units
 dat <- data.frame(solar.time,DO.obs = raw$DO.mgL,DO.sat,temp.water = raw$Temp.C,light,depth = rep(depth,length(solar.time)))
@@ -59,36 +59,37 @@ par(mar=c(3,4,0,4),mgp=c(1.5,0.5,0),tck=-0.02)
 plot(dat$solar.time,dat$light,type='l',ylab="Light (umol/m^2/s)", xlab="Date",col='black')
 
 
-#cross reference with met data
-met <- read.csv('seatac_met.csv')
+# #cross reference with met data
+###1/31/20 - seatac_met.csv is not currently the same length as mouth_metab
+# met <- read.csv('seatac_met.csv')
+# 
+# plot(as.Date(met$DATE),met$PRCP,type='l')
+# plot(as.Date(met$DATE),met$TAVG,type='l')
+# 
+# 
+# #put met and stream driver data together in the same plot
+# quartz()
+# par(mfrow=c(5,1),mar=c(0,4,1,4),mgp=c(1.5,0.5,0),tck=-0.02,bg='white')
+# plot(as.Date(met$DATE),met$PRCP,type='l',xaxt='n',ylab='Precipitation (in)')
+# par(mar=c(0,4,0,4),mgp=c(1.5,0.5,0),tck=-0.02)
+# plot(as.Date(met$DATE),met$TAVG,type='l',ylab='Average Air Temp (F)',xlab="Date")
+# 
+# par(mar=c(0,4,3,4),mgp=c(1.5,0.5,0),tck=-0.02)
+# plot(dat$solar.time,dat$DO.obs,xlab=NA,type='l',xaxt='n',ylab="DO (mg/l)",col='red')
+# par(mar=c(0,4,0,4),mgp=c(1.5,0.5,0),tck=-0.02)
+# plot(dat$solar.time,dat$temp.water,type='l',xlab=NA,xaxt='n',ylab="Water Temp (C)",col='blue')
+# par(mar=c(3,4,0,4),mgp=c(1.5,0.5,0),tck=-0.02)
+# plot(dat$solar.time,dat$light,type='l',ylab="Light (umol/m^2/s)", xlab="Date",col='black')
 
-plot(as.Date(met$DATE),met$PRCP,type='l')
-plot(as.Date(met$DATE),met$TAVG,type='l')
 
-
-#put met and stream driver data together in the same plot
-quartz()
-par(mfrow=c(5,1),mar=c(0,4,1,4),mgp=c(1.5,0.5,0),tck=-0.02,bg='white')
-plot(as.Date(met$DATE),met$PRCP,type='l',xaxt='n',ylab='Precipitation (in)')
-par(mar=c(0,4,0,4),mgp=c(1.5,0.5,0),tck=-0.02)
-plot(as.Date(met$DATE),met$TAVG,type='l',ylab='Average Air Temp (F)',xlab="Date")
-
-par(mar=c(0,4,3,4),mgp=c(1.5,0.5,0),tck=-0.02)
-plot(dat$solar.time,dat$DO.obs,xlab=NA,type='l',xaxt='n',ylab="DO (mg/l)",col='red')
-par(mar=c(0,4,0,4),mgp=c(1.5,0.5,0),tck=-0.02)
-plot(dat$solar.time,dat$temp.water,type='l',xlab=NA,xaxt='n',ylab="Water Temp (C)",col='blue')
-par(mar=c(3,4,0,4),mgp=c(1.5,0.5,0),tck=-0.02)
-plot(dat$solar.time,dat$light,type='l',ylab="Light (umol/m^2/s)", xlab="Date",col='black')
-
-
-
+#####The following model setups are varied according to GPP and ER functions. Different combinations result in different metabolism estimates, with various levels of success.
 
 
 #####DEFAULT METAB MODEL#####
 #model = mle1 (basic, default MLE metab model)
 mle1.name <- mm_name(type = "mle") #define model structure (basic mle model, default settings)
 mle1.specs <- specs(mle1.name) #assign an object to the model specs for inspection
-mm1 <- metab(mle1.specs, data = dat)
+mm1 <- metab(mle1.specs, data = dat) #run metabolism model
 
 #save this model's output
 daily.metab.mle1 <- predict_metab(mm1)
