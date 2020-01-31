@@ -37,7 +37,7 @@ Dataset Details:
 * No reliable miniDOT data for Garden, Hound, & Culvert from January 3, 2020 to February 7, 2020.
 * There is a period of poor oxygen data at the mouth site in July 2019. These data points have NOT yet been removed from the time series, but the metabolism model would benefit from their removal. Consensus is that these numbers were a fluke.
 * Water Temperature time series was recorded concurrently with Oxygen on the MiniDOTs.
-* According to bucket experiments in the lab, each miniDOT consistently underestimates DO concentrations (mg/L and % saturation), according to the YSI EXO2, which was calibrated for DO before every field deployment. A correction factor has been calculated for each miniDOT and should be applied to the metabolism datasets before proceeding with metabolism model.
+* According to bucket experiments in the lab, each miniDOT consistently underestimates DO concentrations (mg/L and % saturation), according to the YSI EXO2, which was calibrated for DO before every field deployment. A correction factor has been calculated for each miniDOT and should be applied to the metabolism datasets before proceeding with metabolism model. You can learn more about how these correction factors were calculated by digging into the DO Bucket Tests folder in this repository.
   * Mouth
     * mg/L offset:
     * % saturation offset:
