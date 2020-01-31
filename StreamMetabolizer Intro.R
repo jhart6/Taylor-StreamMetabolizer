@@ -101,6 +101,24 @@ plot_metab_preds(mm1)
 quartz()
 plot_DO_preds(mm1)
 
+####BORING RESP MODEL####
+#Seems to work the best
+resp.boring.name <- mm_name(type="mle",ER_fun="q10temp")
+resp.boring.specs <- specs(resp.boring.name)
+resp.boring.mm <- metab(resp.boring.specs,dat)
+
+#save and plot this model's output
+modelparams <- get_params(resp.boring.mm)
+plot_metab_preds(resp.boring.mm)
+plot_DO_preds(resp.boring.mm)
+metab.adjP <- predict_metab(resp.boring.mm)
+do.adjP <- predict_DO(resp.boring.mm)
+
+#explore warnings and error messages
+param.warnings<-get_params(resp.boring.mm) %>%
+  select(date,warnings,errors) 
+metab.warnings <- predict_metab(resp.boring.mm) %>%
+  select(date,warnings,errors)
 
 
 
