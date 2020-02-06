@@ -39,17 +39,17 @@ Dataset Details:
 * Water Temperature time series was recorded concurrently with Oxygen on the MiniDOTs.
 * According to bucket experiments in the lab, each miniDOT consistently underestimates DO concentrations (mg/L and % saturation), according to the YSI EXO2, which was calibrated for DO before every field deployment. A correction factor has been calculated for each miniDOT and should be applied to the metabolism datasets before proceeding with metabolism model. You can learn more about how these correction factors were calculated by digging into the DO Bucket Tests folder in this repository.
   * Mouth
-    * mg/L offset:
-    * % saturation offset:
+    * mg/L offset: 13.85024 %
+    * % saturation offset: 13.75172 %
   * Garden
-    * mg/L offset:
-    * % saturation offset:
+    * mg/L offset: 4.746782 %
+    * % saturation offset: 4.658371 %
   * Hound
-    * mg/L offset:
-    * % saturation offset:
+    * mg/L offset: 8.796492 %
+    * % saturation offset: 8.794387 %
   * Culvert
-    * mg/L offset:
-    * % saturation offset:
+    * mg/L offset: 6.084556 %
+    * % saturation offset: 5.979058 %
 
 Suggested Next Steps:
 * Correct miniDOT time series data according to documented correction factor.
